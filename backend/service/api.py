@@ -58,5 +58,25 @@ def analytics():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+
+@app.route("/sales-overview", methods=["POST"])
+def sales_overview():
+    try:
+        analysis_type = request.json.get("type")
+        result = {}
+
+        if analysis_type == "describe":
+            query = """
+                SELECT quantity, total_price, unit_price FROM sales 
+            """
+            df = query_db(query)
+            describe = df.describe()
+            result = describe.to_dict(orient="records")
+
+        return jsonify({"data": result})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
