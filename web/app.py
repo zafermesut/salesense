@@ -60,53 +60,59 @@ elif selected == "Sales Report":
         df2["Profit"] = profit_data["Profit"]
         most_profitable = df2
         most_profitable = most_profitable.sort_values("Profit", ascending=False).head(7)
+        most_profitable['Profit'] = most_profitable['Profit'].round(2)
 
         expander_p = st.expander("Most Profitable Products",expanded=False)
         fig = px.bar(most_profitable,
                      x="Description",
                      y="Profit",
-                     color="Description",
+                     color="Profit",
                      labels={"Profit": "Total Profit", "Description": "Product"},
                      hover_data=["Quantity", "UnitPrice"],
-                     color_discrete_sequence=px.colors.qualitative.Plotly)
+                     color_continuous_scale="Viridis")
         fig.update_layout(showlegend=False)
         expander_p.plotly_chart(fig, use_container_width=True)
+        expander_p.write(most_profitable[["Description", "Profit"]].head(7))
 
         expander_ts = st.expander("Most Sold Products",expanded=False)
         fig = px.bar(most_sold,
                      x="Description",
                      y="Quantity",
-                     color="Description",
-                     color_discrete_sequence=px.colors.qualitative.Plotly)
+                     color="Quantity",
+                     color_continuous_scale='Cividis')
         fig.update_layout(showlegend=False)
         expander_ts.plotly_chart(fig, use_container_width=True)
+        expander_ts.write(most_sold[["Description", "Quantity"]].head(7))
 
         expander_ls = st.expander("Least Sold Products",expanded=False)
         fig = px.bar(least_sold,
                      x="Description",
                      y="Quantity",
-                     color="Description",
-                     color_discrete_sequence=px.colors.qualitative.Plotly)
+                     color="Quantity",
+                     color_continuous_scale=px.colors.sequential.Viridis)
         fig.update_layout(showlegend=False)
         expander_ls.plotly_chart(fig, use_container_width=True)
+        expander_ls.write(least_sold[["Description", "Quantity"]].head(7))
 
         expander_me = st.expander("Most Expensive Products",expanded=False)
         fig = px.bar(most_exp,
                      x="Description",
                      y="UnitPrice",
-                     color="Description",
-                     color_discrete_sequence=px.colors.qualitative.Plotly)
+                     color="UnitPrice",
+                     color_continuous_scale=px.colors.sequential.Viridis)
         fig.update_layout(showlegend=False)
         expander_me.plotly_chart(fig, use_container_width=True)
+        expander_me.write(most_exp[["Description", "UnitPrice"]].head(7))
 
         expander_cp = st.expander("Cheapest Products",expanded=False)
         fig = px.bar(cheapest,
                      x="Description",
                      y="UnitPrice",
-                     color="Description",
-                     color_discrete_sequence=px.colors.qualitative.Plotly)
+                     color="UnitPrice",
+                     color_continuous_scale=px.colors.sequential.Viridis)
         fig.update_layout(showlegend=False)
         expander_cp.plotly_chart(fig, use_container_width=True)
+        expander_cp.write(cheapest[["Description", "UnitPrice"]].head(7))
 
     with tabs[1]:
         st.subheader("📑 Charts")
