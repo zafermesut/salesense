@@ -3,22 +3,19 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 import plotly.express as px
 
-# Sayfa yapılandırması
 st.set_page_config(page_title="Sales Report Tabs", layout="wide")
 
 df = pd.read_csv("../data/cleaned_data.csv")
 
-# Sidebar Navigation
 with st.sidebar:
     selected = option_menu(
-        menu_title="Navigation",  # Menü başlığı
-        options=["Dashboard", "Users", "Sales", "Sales Report", "Recommendations"],  # Menü seçenekleri
-        icons=["grid", "person", "currency-dollar", "bar-chart", "lightbulb"],  # Menü simgeleri
-        menu_icon="menu-button",  # Menü ikonu
-        default_index=3,  # Varsayılan seçim
+        menu_title="Navigation", 
+        options=["Dashboard", "Users", "Sales", "Sales Report", "Recommendations"],  
+        icons=["grid", "person", "currency-dollar", "bar-chart", "lightbulb"], 
+        menu_icon="menu-button",  
+        default_index=3,  
     )
 
-# Boş bırakılan menüler
 if selected == "Dashboard":
     st.title("Dashboard")
     st.write("Dashboard content goes here...")
@@ -35,34 +32,81 @@ elif selected == "Recommendations":
     st.title("Recommendations")
     st.write("AI-based recommendations content goes here...")
 
-# Sales Report with Tabs
 elif selected == "Sales Report":
     st.title("Sales Report")
 
-    # Tabs for Sales Report
-    tabs = st.tabs(["📊 Product Sales", "📑 Charts", "📉 Trends"])
+    tabs = st.tabs(["Product Sales", "Customer Insights", "Geographical Sales", "Sales Trends"])
 
     with tabs[0]:
         st.subheader("📊 Product Sales")
         st.write("This section contains an overview of product sales.")
 
-        container_ts = st.container(border=True)
-        container_ts.write("### Most Sold Products")
         most_sold = df.groupby("Description")["Quantity"].sum().reset_index()
-        most_sold = most_sold.sort_values("Quantity", ascending=False).head(5)
-        fig = px.bar(most_sold, x="Description", y="Quantity", title="Chart: Most Sold")
-        container_ts.plotly_chart(fig, use_container_width=True)
+        most_sold = most_sold.sort_values("Quantity", ascending=False).head(7)
 
+        least_sold = df.groupby("Description")["Quantity"].sum().reset_index()
+        least_sold = least_sold.sort_values("Quantity", ascending=True).head(7)
 
-        container_me = st.container(border=True)
-        container_me.write("### Most Expensive Products")
         most_exp = df.groupby("Description")["UnitPrice"].max().reset_index()
-        most_exp = most_exp.sort_values("UnitPrice", ascending=False).head(5)
-        fig = px.bar(most_exp, x="Description", y="UnitPrice", title="Chart: Most Expensive")
-        container_me.plotly_chart(fig, use_container_width=True)
-        
+        most_exp = most_exp.sort_values("UnitPrice", ascending=False).head(7)
 
+        cheapest = df.groupby("Description")["UnitPrice"].min().reset_index()
+        cheapest = cheapest.sort_values("UnitPrice", ascending=True).head(7)
 
+        profit_data = df.copy()
+        df2 = df.copy()
+        profit_data["Profit"] = profit_data["Quantity"] * profit_data["UnitPrice"] 
+        most_profitable = profit_data.groupby("Description")["Profit"].sum().reset_index()
+        df2["Profit"] = profit_data["Profit"]
+        most_profitable = df2
+        most_profitable = most_profitable.sort_values("Profit", ascending=False).head(7)
+
+        expander_p = st.expander("Most Profitable Products",expanded=False)
+        fig = px.bar(most_profitable,
+                     x="Description",
+                     y="Profit",
+                     color="Description",
+                     labels={"Profit": "Total Profit", "Description": "Product"},
+                     hover_data=["Quantity", "UnitPrice"],
+                     color_discrete_sequence=px.colors.qualitative.Plotly)
+        fig.update_layout(showlegend=False)
+        expander_p.plotly_chart(fig, use_container_width=True)
+
+        expander_ts = st.expander("Most Sold Products",expanded=False)
+        fig = px.bar(most_sold,
+                     x="Description",
+                     y="Quantity",
+                     color="Description",
+                     color_discrete_sequence=px.colors.qualitative.Plotly)
+        fig.update_layout(showlegend=False)
+        expander_ts.plotly_chart(fig, use_container_width=True)
+
+        expander_ls = st.expander("Least Sold Products",expanded=False)
+        fig = px.bar(least_sold,
+                     x="Description",
+                     y="Quantity",
+                     color="Description",
+                     color_discrete_sequence=px.colors.qualitative.Plotly)
+        fig.update_layout(showlegend=False)
+        expander_ls.plotly_chart(fig, use_container_width=True)
+
+        expander_me = st.expander("Most Expensive Products",expanded=False)
+        fig = px.bar(most_exp,
+                     x="Description",
+                     y="UnitPrice",
+                     color="Description",
+                     color_discrete_sequence=px.colors.qualitative.Plotly)
+        fig.update_layout(showlegend=False)
+        expander_me.plotly_chart(fig, use_container_width=True)
+
+        expander_cp = st.expander("Cheapest Products",expanded=False)
+        fig = px.bar(cheapest,
+                     x="Description",
+                     y="UnitPrice",
+                     color="Description",
+                     color_discrete_sequence=px.colors.qualitative.Plotly)
+        fig.update_layout(showlegend=False)
+        expander_cp.plotly_chart(fig, use_container_width=True)
 
     with tabs[1]:
         st.subheader("📑 Charts")
