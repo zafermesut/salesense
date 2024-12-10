@@ -6,6 +6,14 @@ def get_sales_data():
     sales = db.query_db("SELECT * FROM sales")
     return sales
 
+def get_products_data():
+    products = db.query_db("SELECT * FROM products")
+    return products
+
+def get_countries_data():
+    countries = db.query_db("SELECT * FROM countries")
+    return countries
+
 def get_most_sold_products(sales):
     most_sold = sales.groupby("name")["quantity"].sum().reset_index()
     most_sold = most_sold.sort_values("quantity", ascending=False).head(7)
@@ -56,10 +64,10 @@ def get_rfm_analysis():
     recency = sales.groupby('customer_id')['invoice_date'].max()
     recency = (current_date - recency).dt.days
 
-    # Frequency
+    # frequency
     frequency = sales.groupby('customer_id')['invoice_date'].nunique()
 
-    # Monetary
+    # monetary
     monetary = sales.groupby('customer_id')['total_price'].sum()
 
     rfm_df = pd.DataFrame({
@@ -70,5 +78,75 @@ def get_rfm_analysis():
 
     return rfm_df
 
-  
 
+def segment_customer_based_on_rfm_score(row):
+    if row['RFMScore'] >= 500:
+        return 'Şampiyonlar'
+    elif 400 <= row['RFMScore'] < 500:
+        return 'Sadık Müşteriler'
+    elif 300 <= row['RFMScore'] < 400:
+        return 'Potansiyel Sadıklar'
+    elif 200 <= row['RFMScore'] < 300:
+        return 'Risk Altındaki Müşteriler'
+    else:
+        return 'Kaybedilmiş Müşteriler'
+
+def get_rfm_segments(rfm_df):
+    rfm_df['RecencyScore'] = pd.qcut(rfm_df['Recency'], 5, labels=[5, 4, 3, 2, 1])
+    rfm_df['FrequencyScore'] = pd.qcut(rfm_df['Frequency'], 5, labels=[1, 2, 3, 4],duplicates='drop')  
+    rfm_df['MonetaryScore'] = pd.qcut(rfm_df['Monetary'], 5, labels=[1, 2, 3, 4, 5])  
+
+    rfm_df['RFMScore'] = rfm_df['RecencyScore'].astype(str) + rfm_df['FrequencyScore'].astype(str) + rfm_df['MonetaryScore'].astype(str)
+    rfm_df['RFMScore'] = pd.to_numeric(rfm_df['RFMScore'])
+
+    rfm_df['Segment'] = rfm_df.apply(segment_customer_based_on_rfm_score, axis=1)
+    rfm_df = rfm_df.sort_values('RFMScore', ascending = False)
+
+    return rfm_df
+
+
+def get_geo_data():
+    sales = get_sales_data()
+    sales = sales.groupby('country')['total_price'].sum().reset_index()
+    sales = sales.sort_values('total_price', ascending=False)
+
+    return sales
+
+
+def get_geo_top_products():
+    sales = get_sales_data()
+    product_sales = sales.groupby(['country', 'name'])['total_price'].sum().reset_index()
+    top_products = product_sales.loc[product_sales.groupby('country')['total_price'].idxmax()]
+    total_sales = sales.groupby('country')['total_price'].sum().reset_index()
+    geo_data = total_sales.merge(top_products, on='country', suffixes=('_total', '_top_product'))
+    geo_data = geo_data.sort_values('total_price_total', ascending=False)
+
+    return geo_data
+
+def get_monthly_sales():
+    sales = get_sales_data()
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    sales['month'] = sales['invoice_date'].dt.to_period('M')
+    monthly_sales = sales.groupby('month')['total_price'].sum().reset_index()
+    monthly_sales['month_label'] = monthly_sales['month'].dt.strftime('%B %Y') 
+    monthly_sales = monthly_sales.sort_values('month')
+
+    return monthly_sales
+
+def get_hourly_sales():
+    sales = get_sales_data()
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    sales['hour'] = sales['invoice_date'].dt.hour  
+    hourly_sales = sales.groupby('hour')['total_price'].sum().reset_index()
+
+    return hourly_sales
+
+def get_weekly_sales():
+    sales = get_sales_data()
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    sales['weekday'] = sales['invoice_date'].dt.weekday
+    weekly_sales = sales.groupby('weekday')['total_price'].sum().reset_index()
+    weekday_labels = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+    weekly_sales['weekday_name'] = weekly_sales['weekday'].apply(lambda x: weekday_labels[x])
+
+    return weekly_sales, weekday_labels
