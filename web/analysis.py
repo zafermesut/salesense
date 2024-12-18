@@ -14,6 +14,10 @@ def get_countries_data():
     countries = db.query_db("SELECT * FROM countries")
     return countries
 
+def get_customers_data():
+    customers = db.query_db("SELECT * FROM customers")
+    return customers
+
 def get_most_sold_products(sales):
     most_sold = sales.groupby("name")["quantity"].sum().reset_index()
     most_sold = most_sold.sort_values("quantity", ascending=False).head(7)

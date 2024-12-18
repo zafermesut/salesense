@@ -168,6 +168,9 @@ with tabs[1]:
                     **Grafikler:**
                     Sol grafikte müşteri segmentlerinin dağılımını, sağ grafikte ise her segmentin toplam parasal değerini görebilirsiniz.
                 """)
+        
+        st.dataframe(rfm_segments)
+
         col1, col2 = st.columns(2)  
 
         with col1:
