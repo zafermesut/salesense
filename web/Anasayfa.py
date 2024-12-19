@@ -7,3 +7,5 @@ st.set_page_config(
 
 
 st.title("Anasayfa")
+
+
