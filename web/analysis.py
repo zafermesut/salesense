@@ -2,9 +2,47 @@ import numpy as np
 import pandas as pd
 import database as db 
 
+from datetime import datetime, timedelta
+
+
 def get_sales_data():
     sales = db.query_db("SELECT * FROM sales")
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    # sort by date
+    sales = sales.sort_values('invoice_date', ascending=False)
     return sales
+
+def get_last_sales():
+    last_sales = db.query_db("SELECT * FROM sales ORDER BY invoice_date DESC LIMIT 5")
+    last_sales = last_sales.drop(columns=['stock_code','customer_id', 'customer_email'])
+    return last_sales
+
+def get_count_tables():
+    products = db.query_db("SELECT COUNT(*) FROM products")
+    customers = db.query_db("SELECT COUNT(*) FROM customers")
+    sales = db.query_db("SELECT COUNT(*) FROM sales")
+    countries = db.query_db("SELECT COUNT(*) FROM countries")
+
+    # Check if results are not empty and get the count safely
+    products_count = products.iloc[0, 0] if not products.empty else 0
+    customers_count = customers.iloc[0, 0] if not customers.empty else 0
+    sales_count = sales.iloc[0, 0] if not sales.empty else 0
+    countries_count = countries.iloc[0, 0] if not countries.empty else 0
+
+    # Get the count of sales in the last week
+    sales = db.query_db("SELECT * FROM sales")
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    last_week = sales['invoice_date'].max() - timedelta(days=7)
+    sales_last_week = sales[sales['invoice_date'] >= last_week]
+    sales_last_week_count = sales_last_week.shape[0]
+    customers_last_week = sales_last_week.drop_duplicates('customer_id')
+    customers_last_week_count = customers_last_week.shape[0]
+
+
+
+
+    return products_count, customers_count, sales_count, countries_count, sales_last_week_count, customers_last_week_count
+
 
 def get_products_data():
     products = db.query_db("SELECT * FROM products")
@@ -32,7 +70,6 @@ def get_most_expensive_products(sales):
     most_exp = sales.groupby("name")["unit_price"].max().reset_index()
     most_exp = most_exp.sort_values("unit_price", ascending=False).head(7)
     return most_exp
-
 
 def get_cheapest_products(sales):
     cheapest = sales.groupby("name")["unit_price"].min().reset_index()
