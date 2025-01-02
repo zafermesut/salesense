@@ -1,37 +1,51 @@
 import streamlit as st
 import analysis as an
-from streamlit_card import card
-from plotly.tools import FigureFactory as ff
 
 st.set_page_config(
-    page_title="Anasayfa", 
-    page_icon=":sunny:", 
-    layout="wide")
+    page_title="Anasayfa",
+    page_icon="🏠",
+    layout="wide"
+)
 
 
-st.title("Bilen Ticaret")
+# Ana sayfa içeriği
+st.title(f"Hoş Geldiniz")
 
-st.subheader("Genel Bakış")
-products, customers, sales, countries, sales_last_week_count, customers_last_week_count = an.get_count_tables()
-# 4 cols
+# İstatistikler
+products, customers, sales, countries, sales_last_week, customers_last_week = an.get_count_tables()
+
 col1, col2, col3, col4 = st.columns(4)
+
 with col1:
-    con1 = st.container(border=True)
-    con1.metric(label="Toplam Satış", value=sales, delta="{} (1 Hafta)".format(sales_last_week_count))
+    st.info(f"**Toplam Ürün**  \n{products:,}", icon="📦")
+
 with col2:
-    con2 = st.container(border=True)
-    con2.metric(label="Toplam Ürün", value=products, delta=0)
+    st.info(f"**Toplam Müşteri**  \n{customers:,}", icon="👥")
+    
 with col3:
-    con3 = st.container(border=True)
-    con3.metric(label="Toplam Müşteri", value=customers, delta=customers_last_week_count)
+    st.info(f"**Toplam Satış**  \n{sales:,}", icon="💰")
+    
 with col4:
-    con4 = st.container(border=True)
-    con4.metric(label="Toplam Ülke", value=countries, delta=0)
+    st.info(f"**Toplam Ülke**  \n{countries:,}", icon="🌍")
 
+st.divider()
 
+# Son hafta istatistikleri
+st.subheader("Son 7 Gün")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.success(f"**Satış Sayısı**  \n{sales_last_week:,}", icon="📈")
+    
+with col2:
+    st.success(f"**Aktif Müşteri**  \n{customers_last_week:,}", icon="👥")
+
+st.divider()
+
+# Son satışlar
 st.subheader("Son Satışlar")
 last_sales = an.get_last_sales()
-st.dataframe(last_sales)
+st.dataframe(last_sales, use_container_width=True)
 
 
 

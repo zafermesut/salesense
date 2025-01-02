@@ -7,7 +7,7 @@ st.set_page_config(
     page_icon = ":shopping_trolley:", 
     layout="wide")
 
-st.title("Ürünler")
+st.title("🛍️ Ürünler")
 
 products = an.get_products_data()
 

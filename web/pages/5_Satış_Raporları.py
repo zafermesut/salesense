@@ -3,7 +3,6 @@ import pandas as pd
 import analysis as an
 import plotly.express as px
 import locale
-import calendar
 
 locale.setlocale(locale.LC_TIME, 'tr_TR.UTF-8')  # For Linux/Mac 
 # locale.setlocale(locale.LC_TIME, 'turkish')  # For Windows 

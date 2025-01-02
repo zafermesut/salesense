@@ -7,7 +7,7 @@ st.set_page_config(
     page_icon = ":heavy_dollar_sign:", 
     layout="wide")
 
-st.title("Satışlar")
+st.title("📊 Satışlar")
 
 sales = an.get_sales_data()
 

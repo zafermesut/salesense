@@ -8,3 +8,20 @@ def query_db(query):
     df = pd.read_sql_query(query, conn)
     conn.close()
     return df
+
+def insert_db(query):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+    return True
+
+def update_db(query):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+    return True
+

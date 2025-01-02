@@ -4,6 +4,11 @@ import database as db
 
 from datetime import datetime, timedelta
 
+def get_settings_data():
+    settings = db.query_db("SELECT * FROM settings")
+    company_name = settings['company_name'].iloc[0]
+    description = settings['description'].iloc[0]
+    return company_name, description
 
 def get_sales_data():
     sales = db.query_db("SELECT * FROM sales")
@@ -143,6 +148,11 @@ def get_rfm_segments(rfm_df):
     rfm_df['Segment'] = rfm_df.apply(segment_customer_based_on_rfm_score, axis=1)
     rfm_df = rfm_df.sort_values('RFMScore', ascending = False)
 
+    customers = get_customers_data()
+    customers = customers.rename(columns={'CustomerID': 'customer_id'})
+    rfm_df = rfm_df.merge(customers, on='customer_id')
+    rfm_df = rfm_df[['customer_id', 'Recency', 'Frequency', 'Monetary', 'RFMScore', 'Segment', 'CustomerName', 'CustomerEmail']]
+
     return rfm_df
 
 
@@ -191,3 +201,8 @@ def get_weekly_sales():
     weekly_sales['weekday_name'] = weekly_sales['weekday'].apply(lambda x: weekday_labels[x])
 
     return weekly_sales, weekday_labels
+
+def save_settings_data(name, desc):
+    db.update_db("UPDATE settings SET company_name = '{}', description = '{}'".format(name, desc))
+    return
+

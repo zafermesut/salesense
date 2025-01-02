@@ -7,7 +7,7 @@ st.set_page_config(
     page_icon = ":busts_in_silhouette:", 
     layout="wide")
 
-st.title("Müşteriler")
+st.title("👥 Müşteriler")
 
 customers = an.get_customers_data()
 

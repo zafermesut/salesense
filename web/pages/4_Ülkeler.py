@@ -7,7 +7,7 @@ st.set_page_config(
     page_icon = ":earth_americas:", 
     layout="wide")
 
-st.title("Ülkeler")
+st.title("🌎 Ülkeler")
 
 countries = an.get_countries_data()
 
