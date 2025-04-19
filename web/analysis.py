@@ -184,6 +184,15 @@ def get_monthly_sales():
 
     return monthly_sales
 
+def get_monthly_sales_by_product():
+    sales = get_sales_data()
+    sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
+    sales['year_month'] = sales['invoice_date'].dt.to_period('M')
+    monthly_sales = sales.groupby(['name', 'year_month'])['quantity'].sum().reset_index()
+    monthly_sales['year_month'] = monthly_sales['year_month'].astype(str)
+    
+    return monthly_sales
+
 def get_hourly_sales():
     sales = get_sales_data()
     sales['invoice_date'] = pd.to_datetime(sales['invoice_date'])
