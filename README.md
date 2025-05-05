@@ -17,11 +17,6 @@ This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built wi
 - **Sales Trends**: Visualize historical sales data and trends.
 - **Product Performance**: Analyze individual product sales and popularity.
 
-### Predictive Models
-
-- **LSTM (Long Short-Term Memory)**: Predict future sales trends based on historical data.
-- **ARIMA (AutoRegressive Integrated Moving Average)**: Model and forecast time-series data.
-
 ### Interactive Dashboard
 
 - Built with **Streamlit**, providing a user-friendly interface.
