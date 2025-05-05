@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import database as db 
+import random
 
 from datetime import datetime, timedelta
 
@@ -190,8 +191,31 @@ def get_monthly_sales_by_product():
     sales['year_month'] = sales['invoice_date'].dt.to_period('M')
     monthly_sales = sales.groupby(['name', 'year_month'])['quantity'].sum().reset_index()
     monthly_sales['year_month'] = monthly_sales['year_month'].astype(str)
-    
+    monthly_sales = monthly_sales.sort_values(by='quantity', ascending=False).reset_index(drop=True)
     return monthly_sales
+
+def get_daily_sales_with_zeros(product_name, year=2023, fill_range=(1, 100)):
+    sales_df = get_sales_data()
+    sales_df['invoice_date'] = pd.to_datetime(sales_df['invoice_date'])
+    sales_df['date'] = sales_df['invoice_date'].dt.date
+
+    # Belirtilen ürün ve yıl filtresi
+    product_sales = sales_df[(sales_df['name'] == product_name) & (sales_df['invoice_date'].dt.year == year)]
+    daily_sales = product_sales.groupby('date')['quantity'].sum().reset_index()
+
+    # Tüm günleri oluştur
+    date_range = pd.date_range(start=f"{year}-01-01", end=f"{year}-12-31", freq='D')
+    full_dates = pd.DataFrame({'date': date_range.date})
+
+    # Birleştir, eksik günleri rastgele sayılarla doldur
+    full_daily_sales = full_dates.merge(daily_sales, on='date', how='left')
+
+    # Null olan quantity'leri random sayılarla doldur
+    full_daily_sales['quantity'] = full_daily_sales['quantity'].apply(
+        lambda x: int(random.randint(*fill_range)) if pd.isna(x) else int(x)
+    )
+
+    return full_daily_sales
 
 def get_hourly_sales():
     sales = get_sales_data()

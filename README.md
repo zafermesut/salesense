@@ -1,7 +1,9 @@
 # SaleSense
+
 E-Commerce Sales Analysis and Prediction Dashboard
 
 ## 📌 Overview
+
 This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built with Python and Streamlit. It provides insightful analytics and sales predictions using advanced machine learning models like **LSTM** and **ARIMA**. The dashboard integrates features such as **RFM Analysis**, **Customer Segmentation**, **Sales Trends**, and **Product Performance Analysis** to empower decision-making for e-commerce businesses.
 
 ---
@@ -9,27 +11,32 @@ This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built wi
 ## 🚀 Features
 
 ### Data Analysis
+
 - **RFM Analysis**: Analyze Recency, Frequency, and Monetary metrics for customer segmentation.
 - **Customer Segmentation**: Identify customer groups for targeted marketing campaigns.
 - **Sales Trends**: Visualize historical sales data and trends.
 - **Product Performance**: Analyze individual product sales and popularity.
 
 ### Predictive Models
+
 - **LSTM (Long Short-Term Memory)**: Predict future sales trends based on historical data.
 - **ARIMA (AutoRegressive Integrated Moving Average)**: Model and forecast time-series data.
 
 ### Interactive Dashboard
+
 - Built with **Streamlit**, providing a user-friendly interface.
 - Dynamic visualizations for better data interpretation.
 - Customizable parameters for analysis and predictions.
 
 ### Database
+
 - Uses **SQLite3** for data storage and management.
 - Efficient querying and handling of sales data.
 
 ---
 
 ## 🛠️ Technology Stack
+
 - **Programming Language**: Python
 - **Framework**: Streamlit
 - **Database**: SQLite3
@@ -49,17 +56,25 @@ This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built wi
 
 ## 🧪 Models
 
-### LSTM (Long Short-Term Memory)
-- A type of recurrent neural network (RNN) well-suited for time-series prediction.
-- Captures long-term dependencies in data.
+### Prophet
+
+- A time-series forecasting model developed by Facebook.
+- Handles trends, seasonality, and holidays effectively.
 
 ### ARIMA (AutoRegressive Integrated Moving Average)
+
 - A statistical model for analyzing and forecasting time-series data.
 - Effective for univariate data with trends and seasonality.
+
+### TEMPO
+
+- Prompt-based Generative Pre-trained Transformer for Time Series Forecasting
+- Especially effective for complex and non-linear time-series.
 
 ---
 
 ## 📖 References
+
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [SQLite3 Documentation](https://www.sqlite.org/docs.html)
 - [LSTM Theory](https://en.wikipedia.org/wiki/Long_short-term_memory)
@@ -68,5 +83,6 @@ This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built wi
 ---
 
 ## 🌟 Acknowledgments
+
 - Inspired by real-world e-commerce analytics challenges.
 - Thanks to the open-source community for amazing tools and libraries!
