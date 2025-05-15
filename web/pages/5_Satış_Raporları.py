@@ -3,6 +3,13 @@ import pandas as pd
 import analysis as an
 import plotly.express as px
 import locale
+from authenticate import check_session
+from streamlit_extras.switch_page_button import switch_page
+
+if not check_session():
+    st.warning("Lütfen önce giriş yapınız.")
+    switch_page("login")  
+    st.stop()   
 
 locale.setlocale(locale.LC_TIME, 'tr_TR.UTF-8')  # For Linux/Mac 
 # locale.setlocale(locale.LC_TIME, 'turkish')  # For Windows 

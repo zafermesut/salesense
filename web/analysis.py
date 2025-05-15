@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import database as db 
 import random
-
+import bcrypt
 from datetime import datetime, timedelta
 
 def get_settings_data():
@@ -10,6 +10,42 @@ def get_settings_data():
     company_name = settings['company_name'].iloc[0]
     description = settings['description'].iloc[0]
     return company_name, description
+
+def get_all_users():
+    users = db.query_db("SELECT id, email, username FROM users")
+    return users
+
+def get_user_by_email(email):
+    query = f"SELECT id, email, username FROM users WHERE email = '{email}'"
+    user_df = db.query_db(query)
+    if user_df.empty:
+        return None
+    row = user_df.iloc[0]
+    return row['id'], row['email'], row['username']
+
+def update_user(user_id, email, username, password=None):
+    if password:
+        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()  # hash'i string olarak sakla
+        sql = f"""
+        UPDATE users 
+        SET email = '{email}', username = '{username}', password = '{hashed}'
+        WHERE id = {user_id}
+        """
+    else:
+        sql = f"""
+        UPDATE users 
+        SET email = '{email}', username = '{username}'
+        WHERE id = {user_id}
+        """
+    db.update_db(sql)
+
+def add_user(email, username, password):
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    sql = f"""
+    INSERT INTO users (email, username, password)
+    VALUES ('{email}', '{username}', '{hashed}')
+    """
+    db.update_db(sql)
 
 def get_sales_data():
     sales = db.query_db("SELECT * FROM sales")

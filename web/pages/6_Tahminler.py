@@ -7,6 +7,13 @@ from statsmodels.tsa.arima.model import ARIMA
 import plotly.graph_objects as go
 import warnings
 import analysis as an
+from authenticate import check_session
+from streamlit_extras.switch_page_button import switch_page
+
+if not check_session():
+    st.warning("Lütfen önce giriş yapınız.")
+    switch_page("login")  
+    st.stop()   
 
 
 
