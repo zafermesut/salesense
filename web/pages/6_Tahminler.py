@@ -19,12 +19,7 @@ if not check_session():
 
 warnings.filterwarnings("ignore")
 
-# TEMPO importları
-from tempo.models.TEMPO import TEMPO
 
-
-
-# Sayfa ayarları
 st.set_page_config(
     page_title="Tahminler", 
     page_icon="🎯", 
@@ -34,13 +29,12 @@ st.set_page_config(
 st.title("🎯 Satış Tahmin Paneli")
 
 
-# Ürün verisi
 monthly_sales = an.get_monthly_sales_by_product()
 product_list = monthly_sales['name'].unique()
 
 # Arayüz
 selected_product = st.selectbox("🛒 Ürün Seçin", product_list)
-selected_model = st.selectbox("📊 Model Seçin", ["Prophet", "ARIMA", "TEMPO"])
+selected_model = st.selectbox("📊 Model Seçin", ["Prophet", "ARIMA"])
 n_months = st.slider("📅 Tahmin Edilecek Ay Sayısı", 1, 12, 3)
 
 if st.button("🔮 Tahmin Et"):
@@ -86,28 +80,6 @@ if st.button("🔮 Tahmin Et"):
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=df_arima.index, y=df_arima.values, mode='lines+markers', name='Gerçek Satışlar', line=dict(color='blue')))
         fig.add_trace(go.Scatter(x=forecast_dates, y=forecast.values, mode='lines+markers', name='Tahmin', line=dict(color='green', dash='dash')))
-
-    elif selected_model == "TEMPO":
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        model = TEMPO.load_pretrained_model(
-            device=device,
-            repo_id="Melady/TEMPO",
-            filename="TEMPO-80M_v1.pth",
-            cache_dir="./checkpoints/TEMPO_checkpoints"
-        )
-
-        y_series = df['y'] 
-        print(f"y_series: {y_series}")
-        with torch.no_grad():
-            predicted = model.predict(y_series, pred_length=n_months)
-
-        forecast_dates = pd.date_range(start=df['ds'].max() + pd.offsets.MonthBegin(), periods=n_months, freq='M')
-        for date, val in zip(forecast_dates, predicted[:n_months]):
-            st.success(f"📦 {date.strftime('%B %Y')}: Tahmini Satış = {int(val)} adet")
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df['ds'], y=df['y'], mode='lines+markers', name='Gerçek Satışlar', line=dict(color='blue')))
-        fig.add_trace(go.Scatter(x=forecast_dates, y=predicted[:n_months], mode='lines+markers', name='Tahmin (TEMPO)', line=dict(color='purple', dash='dash')))
 
     fig.update_layout(
         title=f"{selected_product} - Satış Tahmin Grafiği ({selected_model})",

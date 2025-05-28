@@ -61,11 +61,6 @@ This project is a comprehensive **E-Commerce Sales Analysis Dashboard** built wi
 - A statistical model for analyzing and forecasting time-series data.
 - Effective for univariate data with trends and seasonality.
 
-### TEMPO
-
-- Prompt-based Generative Pre-trained Transformer for Time Series Forecasting
-- Especially effective for complex and non-linear time-series.
-
 ---
 
 ## 📖 References
